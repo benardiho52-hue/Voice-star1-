@@ -1,3 +1,4 @@
+
 name: Build VoiceStar Android APK
 
 on:
@@ -11,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout VoiceStar source
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -25,24 +26,29 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Generate Android native project
+        run: |
+          npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install --skip-git-init
+
+      - name: Add VoiceStar app screen
+        run: |
+          test -f app.js
+          test -f VoiceStarNative/android/gradlew
+          cp app.js VoiceStarNative/App.js
+
       - name: Install dependencies
+        working-directory: VoiceStarNative
         run: npm install
 
-      - name: Check Android project
+      - name: Build release APK
+        working-directory: VoiceStarNative/android
         run: |
-          test -f android/gradlew
-          test -f android/app/build.gradle || test -f android/app/build.gradle.kts
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
-      - name: Bundle JavaScript
-        run: |
-          mkdir -p android/app/src/main/assets
-          npx react-native bundle \
-            --platform android \
-            --dev false \
-            --entry-file index.js \
-            --bundle-output android/app/src/main/assets/index.android.bundle \
-            --assets-dest android/app/src/main/res
-
-      - name: Build APK
-        working-directory: android
-        run: |
+      - name: Upload VoiceStar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceStar-Android-APK
+          path: VoiceStarNative/android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
