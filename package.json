@@ -3,14 +3,18 @@
   "name": "voicestar",
   "version": "1.0.0",
   "private": true,
-  "description": "VoiceStar music and live-singing community app",
+  "description": "VoiceStar — Your Stage, Your Voice, Your Star Power!",
   "main": "app.js",
   "scripts": {
-    "android:apk": "echo \"Use the GitHub Actions Android APK workflow\""
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "test:syntax": "node --check app.js"
   },
   "dependencies": {
     "react": "19.1.0",
     "react-native": "0.81.5"
+  },
+  "devDependencies": {
+    "@react-native-community/cli": "20.0.0"
   }
 }
-
