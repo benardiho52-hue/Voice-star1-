@@ -1,24 +1,55 @@
-VoiceStar – Your Stage, Your Voice, Your Star Power! ⭐🎤
+name: Build VoiceStar Android APK
 
-VoiceStar is a music and live-singing social app built for upcoming artists, singers, music lovers, and creative communities. Discover new talent, share your songs, perform live, connect with fans, and grow your music career.
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
-⭐ Main Features
+permissions:
+  contents: read
 
-- Home & Discover: Explore songs, discover talented artists, and find new voices.
-- Live Rooms: Host or join live singing sessions, connect with listeners, chat, and enjoy performances.
-- Artist Studio: Create your music, record vocals, and enhance your sound with audio effects.
-- Publish Songs: Upload your songs with cover images, titles, genres, descriptions, and hashtags.
-- Artist Profiles: Showcase your music, followers, achievements, and personal artist identity.
-- Social Community: Follow artists, interact with fans, share comments, and build friendships.
-- Gifts & Rewards: Celebrate performers with virtual gifts, coins, achievements, and badges.
-- Families & Teams: Build music communities, complete tasks, earn experience, and compete in family rankings.
-- Notifications: Stay updated on new followers, messages, live rooms, and music activities.
-- Safety & Moderation: Support a respectful community with reporting tools and appropriate content controls.
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
 
-🎶 Our Mission
+    steps:
+      - name: Checkout VoiceStar
+        uses: actions/checkout@v4
 
-VoiceStar gives emerging artists a place to express themselves, develop their talents, share their creativity, and connect with a supportive music community.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
 
-Whether you sing, create music, or simply love discovering new talent, your journey starts here.
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
 
-VoiceStar — Your Stage. Your Voice. Your Star Power! ⭐
+      - name: Install Android SDK
+        uses: android-actions/setup-android@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check Android project
+        run: |
+          test -f android/gradlew
+          test -f android/app/build.gradle -o -f android/app/build.gradle.kts
+
+      - name: Build VoiceStar APK
+        working-directory: android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon
+
+      - name: Upload VoiceStar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceStar-Android-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
+          retention-days: 14
