@@ -27,21 +27,27 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Check VoiceStar app source
+        run: |
+          set -e
+          test -f app.js
+          node --check app.js
+          echo "VoiceStar app source passed syntax check."
+
       - name: Generate Android native project
         run: |
           npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install --skip-git-init
 
-      - name: Add VoiceStar app screen
-        run: |
-          set -e
-          test -f app.js
-          test -f VoiceStarNative/android/gradlew
-          cp app.js VoiceStarNative/App.js
-          echo "VoiceStar app screen copied successfully."
-
       - name: Install dependencies
         working-directory: VoiceStarNative
         run: npm install
+
+      - name: Install VoiceStar app screen
+        run: |
+          set -e
+          cp app.js VoiceStarNative/App.js
+          test -f VoiceStarNative/App.js
+          echo "VoiceStar app screen installed."
 
       - name: Build release APK
         working-directory: VoiceStarNative/android
