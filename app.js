@@ -13,7 +13,6 @@ import {
 } from "react-native";
 
 
-
 const C = {
   bg: "#10091B",
   card: "#20132F",
