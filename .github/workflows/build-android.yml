@@ -1,55 +1,57 @@
 name: Build VoiceStar Android APK
 
 on:
-push:
-branches:
-- main
-workflow_dispatch:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
-build:
-runs-on: ubuntu-latest
+  build:
+    name: Build VoiceStar APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
 
-steps:
-  - name: Checkout VoiceStar source
-    uses: actions/checkout@v4
+    steps:
+      - name: Checkout VoiceStar source
+        uses: actions/checkout@v4
 
-  - name: Setup Node.js
-    uses: actions/setup-node@v4
-    with:
-      node-version: 22
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
-  - name: Setup Java
-    uses: actions/setup-java@v4
-    with:
-      distribution: temurin
-      java-version: 17
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
 
-  - name: Generate Android native project
-    run: |
-      npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install --skip-git-init
+      - name: Generate Android native project
+        run: |
+          npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install --skip-git-init
 
-  - name: Add VoiceStar app screen
-    run: |
-      set -e
-      test -f app.js || { echo "ERROR: app.js is missing from the repository root"; exit 1; }
-      test -f VoiceStarNative/android/gradlew || { echo "ERROR: Android Gradle wrapper is missing"; exit 1; }
-      cp app.js VoiceStarNative/App.js
-      echo "VoiceStar app screen copied successfully."
+      - name: Add VoiceStar app screen
+        run: |
+          set -e
+          test -f app.js
+          test -f VoiceStarNative/android/gradlew
+          cp app.js VoiceStarNative/App.js
+          echo "VoiceStar app screen copied successfully."
 
-  - name: Install dependencies
-    working-directory: VoiceStarNative
-    run: npm install
+      - name: Install dependencies
+        working-directory: VoiceStarNative
+        run: npm install
 
-  - name: Build release APK
-    working-directory: VoiceStarNative/android
-    run: |
-      chmod +x gradlew
-      ./gradlew assembleRelease
+      - name: Build release APK
+        working-directory: VoiceStarNative/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease
 
-  - name: Upload VoiceStar APK
-    uses: actions/upload-artifact@v4
-    with:
-      name: VoiceStar-Android-APK
-      path: VoiceStarNative/android/app/build/outputs/apk/release/app-release.apk
-      if-no-files-found: error
+      - name: Upload VoiceStar APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: VoiceStar-Android-APK
+          path: VoiceStarNative/android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
