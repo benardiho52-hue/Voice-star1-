@@ -6,60 +6,43 @@ on:
       - main
   workflow_dispatch:
 
-permissions:
-  contents: read
-
 jobs:
-  build-android:
-    name: Build VoiceStar APK
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout VoiceStar
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: 22
 
-      - name: Set up Java
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "17"
-
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v4
+          java-version: 17
 
       - name: Install dependencies
         run: npm install
 
-      - name: Generate missing Android project
-        run: |
-          if [ ! -f android/gradlew ] || \
-             { [ ! -f android/app/build.gradle ] && [ ! -f android/app/build.gradle.kts ]; }; then
-            echo "Generating Android build files..."
-            npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install
-            cp -R VoiceStarNative/android ./android
-            rm -rf VoiceStarNative
-          fi
-
-      - name: Verify Android project
+      - name: Check Android project
         run: |
           test -f android/gradlew
-          test -f android/app/build.gradle
+          test -f android/app/build.gradle || test -f android/app/build.gradle.kts
+
+      - name: Bundle JavaScript
+        run: |
+          mkdir -p android/app/src/main/assets
+          npx react-native bundle \
+            --platform android \
+            --dev false \
+            --entry-file index.js \
+            --bundle-output android/app/src/main/assets/index.android.bundle \
+            --assets-dest android/app/src/main/res
 
       - name: Build APK
+        working-directory: android
         run: |
-          chmod +x android/gradlew
-          cd android
-          ./gradlew assembleDebug --no-daemon
-
-      - name: Upload VoiceStar APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: VoiceStar-Android-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
-          if-no-files-found: error
-          retention-days: 14
