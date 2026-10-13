@@ -12,6 +12,10 @@ import {
   Alert,
 } from "react-native";
 
+
+
+const C = {
+  bg: "#10091B",
   card: "#20132F",
   purple: "#9B4DFF",
   pink: "#FF3DAE",
