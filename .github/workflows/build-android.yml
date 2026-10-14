@@ -1,3 +1,4 @@
+
 name: Build VoiceStar Android APK
 
 on:
@@ -10,7 +11,7 @@ jobs:
   build:
     name: Build VoiceStar APK
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 60
 
     steps:
       - name: Checkout VoiceStar source
@@ -27,27 +28,44 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Check VoiceStar app source
+      - name: Check source files
         run: |
           set -e
           test -f app.js
+          test -f features/Recording.js
+          test -f lib/supabase.js
           node --check app.js
-          echo "VoiceStar app source passed syntax check."
 
-      - name: Generate Android native project
+      - name: Generate Android project
         run: |
           npx --yes @react-native-community/cli@20.0.0 init VoiceStarNative --version 0.81.5 --skip-install --skip-git-init
 
       - name: Install dependencies
         working-directory: VoiceStarNative
-        run: npm install
+        run: |
+          npm install
+          npm install @supabase/supabase-js react-native-url-polyfill react-native-audio-recorder-player@4.1.3 react-native-nitro-modules
 
-      - name: Install VoiceStar app screen
+      - name: Copy VoiceStar source
         run: |
           set -e
           cp app.js VoiceStarNative/App.js
-          test -f VoiceStarNative/App.js
-          echo "VoiceStar app screen installed."
+          mkdir -p VoiceStarNative/features VoiceStarNative/services VoiceStarNative/lib
+          cp features/Recording.js VoiceStarNative/features/Recording.js
+          cp services/voiceStar.js VoiceStarNative/services/voiceStar.js
+          cp lib/supabase.js VoiceStarNative/lib/supabase.js
+
+      - name: Add microphone permission
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("VoiceStarNative/android/app/src/main/AndroidManifest.xml")
+          s = p.read_text()
+          permission = '<uses-permission android:name="android.permission.RECORD_AUDIO" />'
+          if permission not in s:
+              s = s.replace("<application", permission + "\n    <application", 1)
+              p.write_text(s)
+          PY
 
       - name: Build release APK
         working-directory: VoiceStarNative/android
