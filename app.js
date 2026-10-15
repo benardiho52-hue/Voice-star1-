@@ -965,4 +965,487 @@ const styles = StyleSheet.create({
   navIcon: { color: C.muted, fontSize: 22, marginBottom: 4 },
   navLabel: { color: C.muted, fontSize: 9, fontWeight: "600" },
   navSelected: { color: C.pink, fontWeight: "900" },
+});  
+styles.secondaryButtonText}>
+              Open Artist Studio
+            </Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[styles.secondaryButton, { marginTop: 12 }]}
+            onPress={handleSignOut}
+          >
+            <Text style={styles.secondaryButtonText}>
+              Sign Out
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </>
+    );
+  }
+
+  if (!authReady) {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <ActivityIndicator
+          color={C.pink}
+          size="large"
+          style={{ flex: 1 }}
+        />
+      </SafeAreaView>
+    );
+  }
+
+  if (!user) {
+    return renderAuth();
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <StatusBar barStyle="light-content" backgroundColor={C.bg} />
+      {renderHeader()}
+
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={styles.contentContainer}
+        keyboardShouldPersistTaps="handled"
+      >
+        {activeTab === "Home" && renderHome()}
+        {activeTab === "Discover" && renderDiscover()}
+        {activeTab === "Studio" && renderStudio()}
+        {activeTab === "Live" && renderLive()}
+        {activeTab === "Profile" && renderProfile()}
+      </ScrollView>
+
+      <View style={styles.bottomNav}>
+        {TABS.map((tab) => (
+          <TouchableOpacity
+            key={tab}
+            style={styles.navItem}
+            onPress={() => setActiveTab(tab)}
+          >
+            <Text
+              style={[
+                styles.navText,
+                activeTab === tab && styles.navTextActive,
+              ]}
+            >
+              {tab}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+    </SafeAreaView>
+  );
+}
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: C.bg,
+  },
+  authWrap: {
+    flexGrow: 1,
+    justifyContent: "center",
+    padding: 22,
+  },
+  header: {
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    borderBottomWidth: 1,
+    borderBottomColor: C.border,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  logo: {
+    color: C.white,
+    fontSize: 27,
+    fontWeight: "900",
+  },
+  logoAccent: {
+    color: C.pink,
+  },
+  tagline: {
+    color: C.muted,
+    fontSize: 11,
+    marginTop: 3,
+  },
+  liveButton: {
+    backgroundColor: "#30203D",
+    borderRadius: 20,
+    paddingHorizontal: 11,
+    paddingVertical: 7,
+  },
+  liveButtonText: {
+    color: C.pink,
+    fontSize: 10,
+    fontWeight: "800",
+  },
+  content: {
+    flex: 1,
+  },
+  contentContainer: {
+    padding: 16,
+    paddingBottom: 28,
+  },
+  hero: {
+    padding: 20,
+    borderRadius: 22,
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    marginBottom: 20,
+  },
+  eyebrow: {
+    color: C.pink,
+    fontWeight: "800",
+    fontSize: 11,
+    letterSpacing: 1.5,
+    marginBottom: 12,
+  },
+  heroTitle: {
+    color: C.white,
+    fontSize: 31,
+    lineHeight: 38,
+    fontWeight: "900",
+    marginBottom: 12,
+  },
+  pinkText: {
+    color: C.pink,
+  },
+  pageTitle: {
+    color: C.white,
+    fontSize: 26,
+    fontWeight: "900",
+    marginBottom: 8,
+  },
+  sectionTitle: {
+    color: C.white,
+    fontSize: 18,
+    fontWeight: "800",
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    marginTop: 20,
+    marginBottom: 12,
+  },
+  bodyText: {
+    color: C.muted,
+    fontSize: 14,
+    lineHeight: 21,
+    marginBottom: 12,
+  },
+  mutedText: {
+    color: C.muted,
+    fontSize: 12,
+  },
+  card: {
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 18,
+    padding: 17,
+    marginBottom: 14,
+  },
+  cardTitle: {
+    color: C.white,
+    fontWeight: "800",
+    fontSize: 15,
+    marginBottom: 5,
+  },
+  input: {
+    backgroundColor: "#160D21",
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 12,
+    color: C.white,
+    paddingHorizontal: 13,
+    paddingVertical: 13,
+    marginBottom: 13,
+    fontSize: 14,
+  },
+  descriptionInput: {
+    minHeight: 90,
+    textAlignVertical: "top",
+  },
+  fieldLabel: {
+    color: C.white,
+    fontSize: 13,
+    fontWeight: "700",
+    marginBottom: 7,
+  },
+  primaryButton: {
+    backgroundColor: C.purple,
+    borderRadius: 13,
+    minHeight: 48,
+    paddingHorizontal: 16,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+  },
+  primaryButtonText: {
+    color: C.white,
+    fontWeight: "900",
+    fontSize: 14,
+  },
+  secondaryButton: {
+    borderWidth: 1,
+    borderColor: C.purple,
+    borderRadius: 13,
+    minHeight: 45,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 12,
+    marginTop: 10,
+  },
+  secondaryButtonText: {
+    color: C.white,
+    fontSize: 13,
+    fontWeight: "700",
+  },
+  disabledButton: {
+    opacity: 0.5,
+  },
+  note: {
+    color: C.muted,
+    fontSize: 11,
+    lineHeight: 17,
+    marginTop: 12,
+  },
+  warningCard: {
+    backgroundColor: "#35251C",
+    borderRadius: 14,
+    padding: 14,
+    marginBottom: 15,
+  },
+  warningTitle: {
+    color: "#FFD19A",
+    fontWeight: "800",
+    marginBottom: 5,
+  },
+  followText: {
+    color: C.pink,
+    fontWeight: "800",
+    fontSize: 12,
+  },
+  emptyIcon: {
+    fontSize: 34,
+    color: C.pink,
+    marginBottom: 10,
+  },
+  songCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 15,
+    padding: 12,
+    marginBottom: 10,
+  },
+  songArtwork: {
+    width: 55,
+    height: 55,
+    borderRadius: 13,
+    backgroundColor: "#44205C",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  artworkText: {
+    color: C.pink,
+    fontSize: 28,
+    fontWeight: "900",
+  },
+  songInfo: {
+    flex: 1,
+  },
+  genreText: {
+    color: C.pink,
+    fontSize: 11,
+    marginTop: 5,
+  },
+  heart: {
+    color: C.pink,
+    fontSize: 22,
+    paddingHorizontal: 7,
+  },
+  quickGrid: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+  },
+  quickCard: {
+    width: "48%",
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 16,
+    padding: 14,
+    marginBottom: 12,
+  },
+  quickIcon: {
+    fontSize: 26,
+    marginBottom: 12,
+  },
+  artistCard: {
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 15,
+    padding: 13,
+    marginBottom: 10,
+  },
+  avatar: {
+    width: 45,
+    height: 45,
+    borderRadius: 23,
+    backgroundColor: C.purple,
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 12,
+  },
+  avatarText: {
+    color: C.white,
+    fontSize: 20,
+    fontWeight: "900",
+  },
+  recordCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: "#351D4B",
+    borderWidth: 2,
+    borderColor: C.pink,
+    alignItems: "center",
+    justifyContent: "center",
+    alignSelf: "center",
+    marginVertical: 18,
+  },
+  recordIcon: {
+    color: C.pink,
+    fontSize: 35,
+  },
+  stopButton: {
+    backgroundColor: C.red,
+    borderRadius: 13,
+    minHeight: 48,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+  },
+  successText: {
+    color: "#75E6A5",
+    textAlign: "center",
+    marginTop: 12,
+    fontWeight: "700",
+  },
+  genreChoices: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    marginBottom: 10,
+  },
+  genreChip: {
+    borderWidth: 1,
+    borderColor: C.border,
+    paddingVertical: 8,
+    paddingHorizontal: 11,
+    borderRadius: 20,
+    marginRight: 7,
+    marginBottom: 7,
+  },
+  genreChipSelected: {
+    backgroundColor: C.purple,
+    borderColor: C.purple,
+  },
+  genreChipText: {
+    color: C.muted,
+    fontSize: 12,
+  },
+  genreChipTextSelected: {
+    color: C.white,
+    fontWeight: "800",
+  },
+  profileCard: {
+    alignItems: "center",
+    backgroundColor: C.card,
+    borderWidth: 1,
+    borderColor: C.border,
+    borderRadius: 20,
+    padding: 22,
+    marginTop: 12,
+    marginBottom: 15,
+  },
+  profileAvatar: {
+    width: 82,
+    height: 82,
+    borderRadius: 41,
+    backgroundColor: C.purple,
+    borderWidth: 3,
+    borderColor: C.pink,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 13,
+  },
+  profileAvatarText: {
+    color: C.white,
+    fontSize: 34,
+    fontWeight: "900",
+  },
+  profileName: {
+    color: C.white,
+    fontSize: 22,
+    fontWeight: "900",
+    marginBottom: 5,
+  },
+  statsRow: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    marginTop: 22,
+  },
+  stat: {
+    alignItems: "center",
+    minWidth: 85,
+  },
+  statNumber: {
+    color: C.pink,
+    fontSize: 23,
+    fontWeight: "900",
+    marginBottom: 4,
+  },
+  followButton: {
+    borderWidth: 1,
+    borderColor: C.pink,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+  },
+  bottomNav: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    backgroundColor: "#181024",
+    borderTopWidth: 1,
+    borderTopColor: C.border,
+    paddingVertical: 12,
+    paddingBottom: 16,
+  },
+  navItem: {
+    paddingHorizontal: 5,
+    paddingVertical: 4,
+  },
+  navText: {
+    color: C.muted,
+    fontSize: 11,
+    fontWeight: "700",
+  },
+  navTextActive: {
+    color: C.pink,
+  },
 });
+                                                      
